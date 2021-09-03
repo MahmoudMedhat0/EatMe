@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -29,6 +29,8 @@ import { Home, CartTab, Search, Favourite, Notification } from "../screens";
 import { Header } from "../componants";
 import LinearGradient from "react-native-linear-gradient";
 
+
+
 const TabButton = ({
   lable,
   icon,
@@ -38,17 +40,17 @@ const TabButton = ({
   innerContainerStyle,
 }) => {
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
+    <TouchableWithoutFeedback onPress={onPress} >
       <Animated.View
         style={
-          [
+          ([
             {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
             },
           ],
-          outerContainerStyle
+          outerContainerStyle)
         }
       >
         <Animated.View
@@ -60,6 +62,7 @@ const TabButton = ({
               borderRadius: 25,
               alignItems: "center",
               justifyContent: "center",
+              marginTop:10
             },
             innerContainerStyle,
           ]}
@@ -69,7 +72,7 @@ const TabButton = ({
             style={{
               width: 20,
               height: 20,
-              tintColor: isFocused? COLORS.white: COLORS.gray2,
+              tintColor: isFocused ? COLORS.white : COLORS.gray2,
             }}
           />
 
@@ -97,7 +100,7 @@ const MainLayout = ({
   setSelectedTab,
 }) => {
   //Reanimated Shared Value
-
+  const flatListRef = useRef();
   const homeTabFlex = useSharedValue(1);
   const homeTabColor = useSharedValue(COLORS.white);
 
@@ -156,17 +159,24 @@ const MainLayout = ({
 
   useEffect(() => {
     if (selectedTab == constants.screens.home) {
+      flatListRef.current.scrollToIndex({
+        index: 0,
+        animated: false,
+      });
       // console.log( homeTabFlex.value, homeColorStyle.value);
       homeTabFlex.value = withTiming(4, { duration: 500 });
       homeTabColor.value = withTiming(COLORS.primary, { duration: 500 });
-
     } else {
-      console.log( homeTabFlex.value, homeColorStyle.value);
+      console.log(homeTabFlex.value, homeColorStyle.value);
       homeTabFlex.value = withTiming(1, { duration: 500 });
       homeTabColor.value = withTiming(COLORS.white, { duration: 500 });
     }
 
-     if (selectedTab == constants.screens.cart) {
+    if (selectedTab == constants.screens.cart) {
+      flatListRef.current.scrollToIndex({
+        index: 2,
+        animated: false,
+      });
       cartTabFlex.value = withTiming(4, { duration: 500 });
       cartTabColor.value = withTiming(COLORS.primary, { duration: 500 });
     } else {
@@ -175,6 +185,10 @@ const MainLayout = ({
     }
 
     if (selectedTab == constants.screens.search) {
+      flatListRef.current.scrollToIndex({
+        index: 1,
+        animated: false,
+      });
       searchTabFlex.value = withTiming(4, { duration: 500 });
       searchTabColor.value = withTiming(COLORS.primary, { duration: 500 });
     } else {
@@ -183,6 +197,10 @@ const MainLayout = ({
     }
 
     if (selectedTab == constants.screens.favourite) {
+      flatListRef.current.scrollToIndex({
+        index: 3,
+        animated: false,
+      });
       favouriteTabFlex.value = withTiming(4, { duration: 500 });
       favouriteTabColor.value = withTiming(COLORS.primary, { duration: 500 });
     } else {
@@ -191,6 +209,10 @@ const MainLayout = ({
     }
 
     if (selectedTab == constants.screens.notification) {
+      flatListRef.current.scrollToIndex({
+        index: 4,
+        animated: false,
+      });
       notificationTabFlex.value = withTiming(4, { duration: 500 });
       notificationTabColor.value = withTiming(COLORS.primary, {
         duration: 500,
@@ -259,13 +281,42 @@ const MainLayout = ({
 
       {/* Content */}
       <View style={{ flex: 1 }}>
-        <Text>MainLayout</Text>
+        <FlatList
+          ref={flatListRef}
+          pagingEnabled
+          horizontal
+          scrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          snapToAlignment="center"
+          snapToInterval={SIZES.width}
+          data={constants.bottom_tabs}
+          keyExtractor={(item) => `${item.id}`}
+          renderItem={({item, index}) => {
+            return (
+              <View
+                style={{
+                  height: SIZES.height,
+                  width: SIZES.width,
+                }}
+              >
+                {item.label  == constants.screens.home && <Home />}
+                {item.label == constants.screens.search && <Search />}
+                {item.label == constants.screens.cart && <CartTab />}
+                {item.label == constants.screens.favourite && <Favourite />}
+                {item.label == constants.screens.notification && (<Notification />)}
+              </View>
+            );
+          }}
+        />
       </View>
       {/* Footer => Custom Tab Navigator */}
       <View
         style={{
-          height: 100,
+          height: 80,
+          paddingTop:10,
           justifyContent: "flex-end",
+          
+          
         }}
       >
         <LinearGradient
@@ -292,6 +343,7 @@ const MainLayout = ({
             backgroundColor: COLORS.white,
             borderTopRightRadius: 20,
             borderTopLeftRadius: 20,
+            
           }}
         >
           <TabButton
