@@ -181,8 +181,9 @@ const CusromDrawer = ({ selectedTab, setSelectedTab }) => {
         overlayColor="transparent"
         drawerStyle={{
           flex: 1,
-          width: "65%",
+          width: "63%",
           padding: 20,
+          paddingBottom:0,
           backgroundColor: "transparent",
         }}
         sceneContainerStyle={{
