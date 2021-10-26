@@ -10,7 +10,32 @@ import {
 import { HorizontalFoodCard } from "../../componants";
 import { COLORS, dummyData, FONTS, icons, SIZES } from "../../constants";
 
+const Section = ({ title, onPress, children }) => {
+  return(
+  <View>
+    {/* Header */}
+    <View
+      style={{
+        flexDirection: "row",
+        marginHorizontal: SIZES.padding,
+        marginTop: 30,
+        marginBottom: 20,
+      }}
+    >
+      <Text style={{ ...FONTS.h3, flex: 1 }}>{title}</Text>
+      <TouchableOpacity onPress={onPress}>
+        <Text style={{ color: COLORS.primary, ...FONTS.body3 }}>Show All</Text>
+      </TouchableOpacity>
+    </View>
+
+    {/* content */}
+
+    {children}
+  </View>)
+};
+
 const Home = () => {
+  const [recommends, setRecommeds] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(1);
   const [selectedMenuType, setSelectedMenuType] = useState(1);
   const [menuList, setMenuList] = useState([]);
@@ -20,7 +45,17 @@ const Home = () => {
   }, []);
 
   function handleChangeCategory(categoryId, menuTypeId) {
+    // Retrive the Recommended menu
+    let selectedRecommended = dummyData.menu.find(
+      (a) => a.name == "Recommended"
+    );
+
     let selectedMenu = dummyData.menu.find((a) => a.id == menuTypeId);
+
+    // set the recommended menu based on the categoryID
+    setRecommeds(
+      selectedRecommended?.list.filter((a) => a.categories.includes(categoryId))
+    );
 
     //set the menu based on the categoryId
     setMenuList(
@@ -57,6 +92,7 @@ const Home = () => {
         <TextInput
           style={{
             flex: 1,
+            padding: 2,
             marginLeft: SIZES.radius,
             ...FONTS.body4,
           }}
@@ -80,7 +116,7 @@ const Home = () => {
     );
   }
 
-  function renderMenuType() {
+  function renderMenuItems() {
     return (
       <FlatList
         horizontal
@@ -88,27 +124,74 @@ const Home = () => {
         keyExtractor={(item) => `${item.id}`}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          marginBottom: 20,
           marginTop: 30,
+          marginBottom: 20,
         }}
-        renderItem={({ item, index }) => {
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             style={{
               marginLeft: SIZES.padding,
               marginRight:
                 index == dummyData.menu.length - 1 ? SIZES.padding : 0,
             }}
+            onPress={() => {
+              setSelectedMenuType(item.id);
+              handleChangeCategory(selectedCategoryId, item.id);
+            }}
           >
             <Text
               style={{
-                ...FONTS.h4,
-                color: "black",
+                ...FONTS.h3,
+                color:
+                  selectedMenuType == item.id ? COLORS.primary : COLORS.black,
               }}
-            >{item.name}</Text>
-          </TouchableOpacity>;
-        }}
+            >
+              {item.name}
+            </Text>
+          </TouchableOpacity>
+        )}
       />
     );
+  }
+  
+
+  function renderRecommendedSection() {
+    return(
+    
+    <Section
+    title={"Recommended"}
+    onPress={() => console.log("Shaw All Recommended")}
+    >
+      
+      <FlatList
+         horizontal
+         data={recommends}
+         keyExtractor={(item) => `${item.id}`}
+         showsHorizontalScrollIndicator={false}
+        
+        renderItem={({item, index}) =>  (
+          
+            <HorizontalFoodCard
+              containerStyle={{
+                height: 180,
+                width: SIZES.width * 0.85,
+                marginLeft: index == 0 ? SIZES.padding : 18,
+                marginRight: index == recommends.length - 1 ? SIZES.padding : 0,
+                paddingRight: SIZES.radius,
+                alignItems: "center",
+              }}
+              imageStyle={{
+                marginTop: 35,
+                height: 150,
+                width: 150,
+              }}
+              item={item}
+              onPress={"horizontalFoodCard Recommended Section"}
+            />
+          
+        )}
+      />
+    </Section>)
   }
 
   return (
@@ -121,17 +204,18 @@ const Home = () => {
       {renderSearch()}
 
       {/* List Section */}
-
       <FlatList
         data={menuList}
         showsVerticalScrollIndicator={false}
         keyExtractor={(item) => `${item.id}`}
         ListHeaderComponent={
           <View>
-            {
-              // Menu Type
-              renderMenuType()
-            }
+            {/* Recommened  */}
+            {renderRecommendedSection()}
+
+            {/*  Menu Type */}
+
+            {renderMenuItems()}
           </View>
         }
         renderItem={({ item, index }) => {

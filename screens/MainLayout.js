@@ -163,11 +163,11 @@ const MainLayout = ({
         index: 0,
         animated: false,
       });
-      // console.log( homeTabFlex.value, homeColorStyle.value);
+      
       homeTabFlex.value = withTiming(4, { duration: 500 });
       homeTabColor.value = withTiming(COLORS.primary, { duration: 500 });
     } else {
-      console.log(homeTabFlex.value, homeColorStyle.value);
+    
       homeTabFlex.value = withTiming(1, { duration: 500 });
       homeTabColor.value = withTiming(COLORS.white, { duration: 500 });
     }
