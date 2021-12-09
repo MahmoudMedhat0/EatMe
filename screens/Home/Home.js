@@ -10,6 +10,7 @@ import {
 import { HorizontalFoodCard } from "../../componants";
 import VerticalFoodCard from "../../componants/VerticalFoodCard";
 import { COLORS, dummyData, FONTS, icons, SIZES } from "../../constants";
+import FilterModal from "./FilterModal";
 
 const Section = ({ title, onPress, children }) => {
   return (
@@ -44,6 +45,7 @@ const Home = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(1);
   const [selectedMenuType, setSelectedMenuType] = useState(1);
   const [menuList, setMenuList] = useState([]);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   useEffect(() => {
     handleChangeCategory(selectedCategoryId, selectedMenuType);
@@ -112,9 +114,7 @@ const Home = () => {
         />
 
         {/* Filter Button */}
-        <TouchableOpacity
-        //onPress
-        >
+        <TouchableOpacity onPress={() => setShowFilterModal(true)}>
           <Image
             source={icons.filter}
             style={{
@@ -255,42 +255,61 @@ const Home = () => {
                   : COLORS.lightGray2,
             }}
             onPress={() => {
-              console.log(item.id,"    ", selectedCategoryId)
+              console.log(item.id, "    ", selectedCategoryId);
               setSelectedCategoryId(item.id);
-              handleChangeCategory(item.id,selectedCategoryId);
+              handleChangeCategory(item.id, selectedCategoryId);
             }}
           >
-
-            <Image source= {item.icon} style = {
-              {
-                marginTop:5,
-                height:50,
-                width:50,
-              }
-            } />
-            <Text style={{alignSelf:'center', marginRight:SIZES.base,color:selectedCategoryId == item.id ?COLORS.white:COLORS.darkGray,
-          ...FONTS.h3}}>{item.name}</Text>
+            <Image
+              source={item.icon}
+              style={{
+                marginTop: 5,
+                height: 50,
+                width: 50,
+              }}
+            />
+            <Text
+              style={{
+                alignSelf: "center",
+                marginRight: SIZES.base,
+                color:
+                  selectedCategoryId == item.id
+                    ? COLORS.white
+                    : COLORS.darkGray,
+                ...FONTS.h3,
+              }}
+            >
+              {item.name}
+            </Text>
           </TouchableOpacity>
         )}
       />
     );
   }
 
-  function renderDeliveryTo(){
-    return(
+  function renderDeliveryTo() {
+    return (
       <View
-      style={{marginTop:SIZES.padding,
-      marginHorizontal:SIZES.padding}}
+        style={{ marginTop: SIZES.padding, marginHorizontal: SIZES.padding }}
       >
-<Text style={{color:COLORS.primary,...FONTS.body3}}>DELVERY TO</Text>
-<TouchableOpacity style={{flexDirection:'row',marginTop:SIZES.base,alignItems:'center'}} >
-
-  <Text style={{...FONTS.h3}}>{dummyData.myProfile.address}</Text>
-  <Image source= {icons.down_arrow} style={{marginLeft:SIZES.base,height:20,width:20}}/>
-</TouchableOpacity>
-
+        <Text style={{ color: COLORS.primary, ...FONTS.body3 }}>
+          DELVERY TO
+        </Text>
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            marginTop: SIZES.base,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ ...FONTS.h3 }}>{dummyData.myProfile.address}</Text>
+          <Image
+            source={icons.down_arrow}
+            style={{ marginLeft: SIZES.base, height: 20, width: 20 }}
+          />
+        </TouchableOpacity>
       </View>
-    )
+    );
   }
   return (
     <View
@@ -301,6 +320,13 @@ const Home = () => {
       {/* Search Section */}
       {renderSearch()}
 
+      {/* Filter Modal */}
+      {showFilterModal && (
+        <FilterModal
+          isVisible={showFilterModal}
+          onClose={()=>setShowFilterModal(false)}
+        />
+      )}
       {/* List Section */}
       <FlatList
         data={menuList}
@@ -343,9 +369,7 @@ const Home = () => {
             />
           );
         }}
-        ListFooterComponent ={
-          <View style = {{height:200}} />
-        }
+        ListFooterComponent={<View style={{ height: 200 }} />}
       />
     </View>
   );

@@ -8,6 +8,7 @@ import Search from "./Search/Search";
 
 // Cart
 import CartTab from "./Cart/CartTab"
+import FilterModal from "./Home/FilterModal";
 
 // Favourite
 import Favourite from "./Favourite/Favourite";
@@ -18,6 +19,7 @@ import Notification from "./Notification/Notification"
 export {
     MainLayout,
     Home,
+    FilterModal,
     Search,
     CartTab,
     Favourite,
